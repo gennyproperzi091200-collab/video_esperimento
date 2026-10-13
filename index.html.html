@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Video esperimento</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    #playerWrap {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #player {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      inset: 0;
+      pointer-events: none; /* blocca tocchi/click sul player */
+    }
+
+    #startOverlay, #endOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      color: #fff;
+      text-align: center;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+
+    #endOverlay {
+      display: none;
+    }
+
+    #startButton {
+      font-size: 22px;
+      padding: 16px 24px;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #message {
+      font-size: 22px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div id="playerWrap">
+    <div id="player"></div>
+  </div>
+
+  <div id="startOverlay">
+    <button id="startButton">Tocca per iniziare il video</button>
+  </div>
+
+  <div id="endOverlay">
+    <div id="message">
+      Il video è terminato.<br>
+      Avvisa il ricercatore.
+    </div>
+  </div>
+
+  <script>
+    let player;
+    let ready = false;
+
+    // Carica l'API ufficiale YouTube IFrame.
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        videoId: 'dUFez7tFrsE',
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          disablekb: 1,
+          fs: 0,
+          rel: 0,
+          playsinline: 1,
+          iv_load_policy: 3,
+          modestbranding: 1
+        },
+        events: {
+          onReady: function() {
+            ready = true;
+          },
+          onStateChange: function(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+              document.getElementById('endOverlay').style.display = 'flex';
+            }
+          }
+        }
+      });
+    }
+
+    document.getElementById('startButton').addEventListener('click', function() {
+      if (!ready || !player) return;
+
+      document.getElementById('startOverlay').style.display = 'none';
+      player.playVideo();
+    });
+
+    // Blocca scorciatoie da tastiera comuni.
+    document.addEventListener('keydown', function(e) {
+      const blocked = [' ', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'k', 'j', 'l'];
+      if (blocked.includes(e.key)) {
+        e.preventDefault();
+      }
+    });
+
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+    });
+  </script>
+</body>
+</html>
