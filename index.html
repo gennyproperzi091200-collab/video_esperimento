@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Video esperimento</title>
+
   <style>
     html, body {
       margin: 0;
@@ -28,10 +29,11 @@
       width: 100%;
       height: 100%;
       inset: 0;
-      pointer-events: none; /* blocca tocchi/click sul player */
+      pointer-events: none;
     }
 
-    #startOverlay, #endOverlay {
+    #startOverlay,
+    #endOverlay {
       position: fixed;
       inset: 0;
       z-index: 20;
@@ -63,13 +65,17 @@
     }
   </style>
 </head>
+
 <body>
+
   <div id="playerWrap">
     <div id="player"></div>
   </div>
 
   <div id="startOverlay">
-    <button id="startButton">Tocca per iniziare il video</button>
+    <button id="startButton">
+      Tocca per iniziare il video
+    </button>
   </div>
 
   <div id="endOverlay">
@@ -83,14 +89,17 @@
     let player;
     let ready = false;
 
-    // Carica l'API ufficiale YouTube IFrame.
+    // Carica l'API ufficiale YouTube IFrame
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     document.head.appendChild(tag);
 
     function onYouTubeIframeAPIReady() {
+
       player = new YT.Player('player', {
-        videoId: 'dUFez7tFrsE',
+
+        videoId: 'Ku2ZpMobDz4',
+
         playerVars: {
           autoplay: 0,
           controls: 0,
@@ -101,37 +110,77 @@
           iv_load_policy: 3,
           modestbranding: 1
         },
+
         events: {
+
           onReady: function() {
             ready = true;
           },
+
           onStateChange: function(event) {
+
             if (event.data === YT.PlayerState.ENDED) {
-              document.getElementById('endOverlay').style.display = 'flex';
+
+              document.getElementById(
+                'endOverlay'
+              ).style.display = 'flex';
+
             }
+
           }
+
         }
+
       });
+
     }
 
-    document.getElementById('startButton').addEventListener('click', function() {
-      if (!ready || !player) return;
+    document
+      .getElementById('startButton')
+      .addEventListener('click', function() {
 
-      document.getElementById('startOverlay').style.display = 'none';
-      player.playVideo();
-    });
+        if (!ready || !player) return;
 
-    // Blocca scorciatoie da tastiera comuni.
-    document.addEventListener('keydown', function(e) {
-      const blocked = [' ', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'k', 'j', 'l'];
-      if (blocked.includes(e.key)) {
+        document.getElementById(
+          'startOverlay'
+        ).style.display = 'none';
+
+        player.playVideo();
+
+      });
+
+    // Blocca alcune scorciatoie da tastiera
+    document.addEventListener(
+      'keydown',
+      function(e) {
+
+        const blocked = [
+          ' ',
+          'ArrowLeft',
+          'ArrowRight',
+          'Home',
+          'End',
+          'k',
+          'j',
+          'l'
+        ];
+
+        if (blocked.includes(e.key)) {
+          e.preventDefault();
+        }
+
+      }
+    );
+
+    // Blocca il menu del tasto destro
+    document.addEventListener(
+      'contextmenu',
+      function(e) {
         e.preventDefault();
       }
-    });
+    );
 
-    document.addEventListener('contextmenu', function(e) {
-      e.preventDefault();
-    });
   </script>
+
 </body>
 </html>
